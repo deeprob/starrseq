@@ -1,5 +1,41 @@
 #!/bin/bash
-set -ue
+#SBATCH --account=girirajan
+#SBATCH --partition=girirajan
+#SBATCH --job-name=atf2_starrseq
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=64
+#SBATCH --time=400:0:0
+#SBATCH --mem-per-cpu=20G
+#SBATCH --chdir /data5/deepro/starrseq/computational_pipeline/src
+#SBATCH --nodelist qingyu
+#SBATCH -o /data5/deepro/starrseq/computational_pipeline/data/log/ATF2_2.log
+#SBATCH -e /data5/deepro/starrseq/computational_pipeline/data/log/atf2_err.log
+
+echo `date` starting job on $HOSTNAME
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/data5/deepro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/data5/deepro/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/data5/deepro/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/data5/deepro/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+echo $PATH
+echo $PWD
+which conda
+
+conda --version
+conda activate starrseq
+
+which python
 
 i_pre="/data5/deepro/starrseq/main_lib/raw_data/Input_SeqReady"
 c_pre="/data5/deepro/starrseq/main_lib/raw_data/CC"
@@ -20,4 +56,6 @@ c_s="001.fastq.gz"
 k_s="001.fastq.gz"
 
 
-python run_analysis.py --input_prefix $i_pre --control_prefix $c_pre --ko_prefix $k_pre --input_replicates "${i_rep}" --control_replicates "${c_rep}" --ko_replicates "${k_rep}" --input_pairs "${i_rp}" --control_pairs "${c_rp}" --ko_pairs "${k_rp}" --input_suffix $i_s --control_suffix $c_s --ko_suffix $k_s --umi "${ick_umi}" --dedup_flag --align_flag --filter_flag --bigwig_flag --peak_flag --control_flag
+python run_analysis.py --input_prefix $i_pre --control_prefix $c_pre --ko_prefix $k_pre --input_replicates "${i_rep}" --control_replicates "${c_rep}" --ko_replicates "${k_rep}" --input_pairs "${i_rp}" --control_pairs "${c_rp}" --ko_pairs "${k_rp}" --input_suffix $i_s --control_suffix $c_s --ko_suffix $k_s --umi "${ick_umi}" --dedup_flag --align_flag --filter_flag --peak_flag #--input_flag --control_flag
+
+echo `date` "done"

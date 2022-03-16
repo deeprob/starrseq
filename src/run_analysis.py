@@ -91,9 +91,9 @@ if __name__=="__main__":
             raise ValueError("There should be three UMI indices for three libraries")
 
     # TODO: Reference genome and roi argument
-    reference_genome = "/data5/deepro/genomes/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta"
-    reference_genome_twobit = "/data5/deepro/genomes/hg38.2bit"
-    roi_file = "/afs/bx.psu.edu/user/d/dzb5732/work/girirajan_lab/starrseq/data/master.sorted.bed"
+    reference_genome = "/data5/deepro/genomes/hg38/GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta"
+    reference_genome_twobit = "/data5/deepro/genomes/hg38/hg38.2bit"
+    roi_file = "/data5/deepro/starrseq/computational_pipeline/data/master.sorted.bed"
     
     finput=args.input_flag
     fcontrol=args.control_flag

@@ -93,8 +93,10 @@ def call_peaks_helper(input_library_filtered_prefix, control_library_filtered_pr
     ko_library_filtered_bam =  ko_library_filtered_prefix + ".bam"
 
     if control_flag:
+        os.makedirs(control_peaks_prefix, exist_ok=True)
         subprocess.call(["bash", f"{CURRENT_DIR_PATH}/call_peaks.sh", f"{control_peaks_prefix}", f"{input_library_filtered_bam}", f"{control_library_filtered_bam}"])
 
+    os.makedirs(ko_peaks_prefix, exist_ok=True)
     subprocess.call(["bash", f"{CURRENT_DIR_PATH}/call_peaks.sh", f"{ko_peaks_prefix}", f"{input_library_filtered_bam}", f"{ko_library_filtered_bam}"])
     return
 
@@ -118,6 +120,7 @@ def call_peaks_helper_cradle(input_library_prefix, input_library_replicates,
                              reference_genome_twobit, roi_file, cradle_out,   
                              control_flag=False):
     """Call peaks for control and ko library using cradle"""
+    print("calling cradle peaks")
     input_rep_paths = list(map(lambda x: "_".join([input_library_prefix, x, "filtered"]) , input_library_replicates.split(" ")))
     control_rep_paths = list(map(lambda x: "_".join([control_library_prefix, x, "filtered"]) , control_library_replicates.split(" ")))
     ko_rep_paths = list(map(lambda x: "_".join([ko_library_prefix, x, "filtered"]) , ko_library_replicates.split(" ")))

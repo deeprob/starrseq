@@ -67,8 +67,8 @@ def starrdust(
         if reader_status == 3:
             break
         total_reads += 1
-        if (total_reads) % rstatus == 0:
-            liner.send('   Processed: {:,} Reads'.format(total_reads))
+        # if (total_reads) % rstatus == 0:
+        #     liner.send('   Processed: {:,} Reads'.format(total_reads))
         if ('N' in r1) or ('N' in r2) or ('N' in umi):
             bad_reads += 1
             continue

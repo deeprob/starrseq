@@ -3,20 +3,21 @@ set -ue
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/afs/bx.psu.edu/user/d/dzb5732/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$('/data5/deepro/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/afs/bx.psu.edu/user/d/dzb5732/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/afs/bx.psu.edu/user/d/dzb5732/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "/data5/deepro/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/data5/deepro/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/afs/bx.psu.edu/user/d/dzb5732/miniconda3/bin:$PATH"
+        export PATH="/data5/deepro/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
+# <<< conda initialize <<<
 
 # activate conda environment
-conda activate starrpeaker_db
+conda activate starrpeaker
 
 ## Get file paths to required arguments ##
 # Prefix to store peaks

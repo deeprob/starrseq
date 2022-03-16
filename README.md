@@ -2,7 +2,7 @@
 
 ## Conda environment for starrseq data exploration and analysis
 ```bash
-foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda python=3.9 matplotlib jupyter ipykernel bwa samtools picard bedtools pandas openpyxl scikit-learn multiprocess bokeh
+foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard bedtools pandas openpyxl scikit-learn multiprocess bokeh requests
 ```
 
 ## Conda environment for starrpeaker
@@ -10,7 +10,7 @@ foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda python=3.9 matplo
 ```bash
 foo@bar:~$ conda create -n starrpeaker -c bioconda python=2.7 pybedtools
 foo@bar:~$ conda activate starrpeaker
-foo@bar:~$ pip install git+https://github.com/gersteinlab/starrpeaker
+foo@bar:~$ pip install git+https://github.com/deeprob/starrpeaker
 ```
 **STARRPEAKER PROBLEM: https://stackoverflow.com/questions/43147475/when-i-use-for-loop-indexerror-list-index-out-of-range**
 
@@ -19,8 +19,14 @@ foo@bar:~$ pip install git+https://github.com/gersteinlab/starrpeaker
 ```bash
 foo@bar:~$ conda create -n cradle python=3.7
 foo@bar:~$ conda activate cradle
-foo@bar:~$ pip install synapseclient
+foo@bar:~$ pip install synapseclient deeptools
 foo@bar:~$ pip install git+https://github.com/deeprob/cradle
+```
+
+## Conda environment for macs2
+
+```bash
+foo@bar:~$ conda create -n macs2 -c conda-forge -c bioconda python=2.7 macs2 -y
 ```
 
 ## Naming convention of libraries
