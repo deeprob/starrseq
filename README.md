@@ -2,7 +2,7 @@
 
 ## Conda environment for starrseq data exploration and analysis
 ```bash
-foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard bedtools pandas openpyxl scikit-learn multiprocess bokeh requests
+foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard pandas openpyxl scikit-learn multiprocess bokeh requests pybedtools
 ```
 
 ## Conda environment for starrpeaker
