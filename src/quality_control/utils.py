@@ -1,8 +1,38 @@
+import os
 import pandas as pd
 import pybedtools
 import pysam
 import pyfastx
 
+# TODO: take tmp dir from arguments
+pybedtools.helpers.set_tempdir("/data5/deepro/tmp/")
+
+####################
+# Filename parsing #
+####################
+
+def get_prefix(filename):
+    file_pre = os.path.splitext(filename)[0]
+    return file_pre
+
+# filtered bam filepaths
+def get_filtered_bams(lib_prefix, lib_reps):
+    """
+    Function to fetch the filepaths of the filtered library replicates and merged bam file
+    """
+    lib_rep_pre = ["_".join([lib_prefix, r, "filtered"]) for r in lib_reps.split()]
+    lib_rep_bams = list(map(lambda x: x.replace("raw_data", "aligned_reads")+".bam", lib_rep_pre))
+    lib_merged_bam = lib_prefix.replace("raw_data", "filtered_libraries") + ".bam"
+    return lib_rep_bams, lib_merged_bam
+
+# coverage bed filepath
+def get_coverage_files(rep_bams, merged_bam):
+    """
+    Function that outputs the filepath of where the coverage files will be stored based on the input bam filepath
+    """
+    rep_covs = [get_prefix(rb).replace("aligned_reads", "results/report/cov") + "_cov.bed" for rb in rep_bams]
+    merged_cov = get_prefix(merged_bam).replace("filtered_libraries", "results/report/cov") + "_cov.bed"
+    return rep_covs, merged_cov
 
 ###################
 # Read QC Metrics #
@@ -32,4 +62,10 @@ def get_coverage(num_reads, len_region, read_length, pe=True):
     return coverage
 
 # roi individual coverage :: metric 9, 10
-def 
+def get_roi_depth(filtered_bam, roi_sorted_bed, bed_out):
+    bam = pybedtools.BedTool(filtered_bam)
+    roi = pybedtools.BedTool(roi_sorted_bed)
+    c = roi.coverage(bam)
+    os.makedirs(os.path.dirname(bed_out), exist_ok=True)
+    c.saveas(bed_out)
+    return 

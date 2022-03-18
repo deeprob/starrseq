@@ -110,7 +110,7 @@ def filter_reads_helper(library_prefix, library_replicates, library_filtered_pre
     Filter reads using samtools - bash script under the ./shell_scripts dir
     TODO: Think about transferring this to pysam since it does not need a new environment and has a python tool
     """
-    os.makedirs(os.path.dirname(library_filtered_prefix))
+    os.makedirs(os.path.dirname(library_filtered_prefix), exist_ok=True)
     cmd = [
         "bash", f"{CURRENT_DIR_PATH}/shell_scripts/2_filter_reads.sh", 
         "-i", f"{library_prefix}", "-r", f"{library_replicates}", 
