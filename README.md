@@ -1,20 +1,23 @@
-# StarrSeq peak calling pipeline
+# STARRSuite
+A set of tools to analyze data produced by STARRSeq libraries
 
-## Conda environment for starrseq data exploration and analysis
+## Creating conda environments 
+
+### Base conda environment for data exploration and analysis
+
 ```bash
-foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard pandas openpyxl scikit-learn multiprocess bokeh requests pybedtools
+foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard pandas openpyxl scikit-learn multiprocess bokeh requests pybedtools pysam
 ```
 
-## Conda environment for starrpeaker
+### Conda environment for starrpeaker peak calling
 
 ```bash
 foo@bar:~$ conda create -n starrpeaker -c bioconda python=2.7 pybedtools
 foo@bar:~$ conda activate starrpeaker
 foo@bar:~$ pip install git+https://github.com/deeprob/starrpeaker
 ```
-**STARRPEAKER PROBLEM: https://stackoverflow.com/questions/43147475/when-i-use-for-loop-indexerror-list-index-out-of-range**
 
-## Conda environment for cradle
+### Conda environment for cradle peak calling
 
 ```bash
 foo@bar:~$ conda create -n cradle python=3.7
@@ -23,16 +26,15 @@ foo@bar:~$ pip install synapseclient deeptools
 foo@bar:~$ pip install git+https://github.com/deeprob/cradle
 ```
 
-## Conda environment for macs2
+### Conda environment for macs2 peak calling
 
 ```bash
-foo@bar:~$ conda create -n macs2 -c conda-forge -c bioconda python=2.7 macs2 -y
+foo@bar:~$ conda create -n macs2 -c conda-forge -c bioconda macs2 -y
 ```
 
-## Naming convention of libraries
-${LIBRARYPREFIX}_${REPLICATEINDEX}_${READPAIRID}_${LIBRARYSUFFIX}
+## Downloading datasets required by the tools
 
-## Align existing reads to the reference genome GRCh38 and create BAM files
+### Reference genome GRCh38
 
 - Step 1: Download the reference genome
     ```bash
@@ -43,20 +45,8 @@ ${LIBRARYPREFIX}_${REPLICATEINDEX}_${READPAIRID}_${LIBRARYSUFFIX}
     ```bash
     foo@bar:~$ bwa index -a bwtsw GRCh38_no_alt_analysis_set_GCA_000001405.15.fasta
     ```
-- Step 3: Align paired end reads to the reference genome using bwa mem and convert them to bam format
 
-    **Read files come from both input and output libraries (STARRSeq naming conventions). Each library will have three replicates and two read files per replicate. Can use the align_fastq_to_ref.sh script for aligning libraries.**
-
-## Filter reads
-- Step 1: Use picard to get rid of duplicates in the aligned BAM files if there are no UMIs, else use STARRDUST before alignment -  estimated time: 3 hours
-
-- Step 2: Use samtools to filter unmapped, secondary alignments, mapping quality score less than 40 - estimated time: few minutes
-
-- Step 3: Pool the replicates in a library for calling peaks - estimated time: few seconds
-
-**NB: Avoid piping while using samtools.**
-
-## Peak calling using starrpeaker
+### STARRPeaker data
 
 - Step 1: Download and unzip covariate files given in starrpeaker github - estimated time: ~30 mins
     Downloaded from the link: https://helkar.synology.me:5001/fsdownload/EKNVQrVHM/covariates
@@ -69,4 +59,9 @@ ${LIBRARYPREFIX}_${REPLICATEINDEX}_${READPAIRID}_${LIBRARYSUFFIX}
     ```bash
     foo@bar:~$ wget https://raw.githubusercontent.com/gersteinlab/starrpeaker/master/data/ENCODE_blacklist_GRCh38_ENCFF419RSJ_merged.bed
     ```
-- Step 4: Peak calling - estimated time: ~2.5 hours
+
+### CRADLE data
+
+TODO
+
+### 
