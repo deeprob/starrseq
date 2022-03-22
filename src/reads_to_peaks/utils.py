@@ -36,11 +36,14 @@ def create_args(meta_file, ko_name,
         output_library_umi = meta_dict[ko_name]["umi"],
         input_library_suffix = meta_dict["input"]["suffix"],
         output_library_suffix = meta_dict[ko_name]["suffix"],
+        input_library_short = meta_dict["input"]["shortform"],
+        output_library_short = meta_dict[ko_name]["shortform"],
         reference_genome = meta_dict["genome"]["ref_fasta"],
         reference_genome_twobit = meta_dict["genome"]["ref_twobit"],
         roi_file = meta_dict["roi"]["roi_sorted"],
         starrpeaker_data_dir = meta_dict["starrpeaker"]["data_dir"],
         cradle_data_dir = meta_dict["cradle"]["data_dir"],
+        # TODO: store short form info as well to create path later on!
 
         # from global flags
         input_flag = input_flag,

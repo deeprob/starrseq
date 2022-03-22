@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--cradle", action="store_false", help="Do not run the cradle peak calling pipeline")
     parser.add_argument("-m", "--macs2", action="store_false", help="Do not run the macs2 peak calling pipeline")
     # calling q or qual argument will start the quality control process of the pipeline
-    parser.add_argument("-q", "--qual", action="store_true", help="Generate a quality control report of the specified input and ko library")
+    parser.add_argument("-q", "--qual", action="store_true", help="Generate a Quality control report on Input and Output libraries")
 
     cli_args = parser.parse_args()
 
@@ -35,8 +35,9 @@ if __name__ == "__main__":
         if cli_args.qual:
             # running the quality control pipeline with the qual flag specified
             qc.generate_report(
-                args.input_library_prefix, args.input_library_reps, 
-                args.output_library_prefix, args.output_library_reps,
+                args.output_library_short,
+                args.input_library_prefix, args.input_library_reps, args.input_library_pair, args.input_library_suffix,  
+                args.output_library_prefix, args.output_library_reps, args.output_library_pair, args.output_library_suffix, 
                 args.roi_file)
 
         else:
