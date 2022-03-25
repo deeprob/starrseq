@@ -22,26 +22,26 @@ def read_qc_html(
 
     html_out = f"""
         <h1>Read Quality Control</h1>
-        <h2>Regions of Interest (ROI) summary</h2>
+        <h2>Regions of Interest (ROI) Summary</h2>
         {roi_html}
-        <h2>Raw reads statistics</h2>
+        <h2>Raw Reads Statistics</h2>
         <h3>Input</h3>
         {in_rr_html}
         <h3>Output</h3>
         {out_rr_html}
-        <h2>Filtered reads statistics</h2>
+        <h2>Filtered Reads Statistics</h2>
         <h3>Input</h3>
         {in_fr_html}
         <h3>Output</h3>
         {out_fr_html}
-        <h2>Read depth statistics</h2>
+        <h2>Read Depth Statistics</h2>
         <h3>Input coverage</h3>
         {in_cv_html}
-        <h3>Minimum Input reads per ROI</h3>
+        <h3>Minimum Input Reads per ROI</h3>
         {in_dp_html}
         <h3>Output coverage</h3>
         {out_cv_html}
-        <h3>Minimum Output reads per ROI</h3>
+        <h3>Minimum Output Reads per ROI</h3>
         {out_dp_html}          
         """
     return html_out
@@ -52,7 +52,7 @@ def generate_read_qc_report(
     in_prefix, in_reps, in_pairs, in_suffix, 
     out_prefix, out_reps, out_pairs, out_suffix, 
     roi):
-    print("Generating Report ...")
+    print("Generating Read QC Report ...")
     # ROI information
     roi_num, roi_meansize, roi_total_bps = ut.get_roi_info(roi)
     # raw reads info
@@ -82,6 +82,40 @@ def generate_read_qc_report(
     return rqc_html
 
 
+def lib_qc_html(
+    corr_fig_path,
+    ):
+
+    corr_html = ut.add_correlation_fig(corr_fig_path)
+
+    html_out = f"""
+        <h1>Library Quality Control</h1>
+        <h2>Replicate Correlation Plots</h2>
+        {corr_html}
+        <h2>Enhancer Summit Correlation</h2>
+
+        <h2>Fold Change Correlation</h2>
+
+        <h2>Reproducible Peaks Statistics</h2>   
+        """
+    return html_out
+
+def generate_lib_qc_report(
+    in_prefix, in_reps, 
+    out_prefix, out_reps, out_short):
+
+    print("Generating Library QC Report ...")
+    corr_fig_path = ut.plot_library_correlation(
+        in_prefix, in_reps, 
+        out_prefix, out_reps, out_short)
+
+
+    lqc_html = lib_qc_html(corr_fig_path)
+
+
+    return lqc_html
+
+
 def generate_report(
     out_short, 
     in_prefix, in_reps, in_pairs, in_suffix, 
@@ -93,6 +127,10 @@ def generate_report(
     read_qc_html = generate_read_qc_report(
         in_prefix, in_reps, in_pairs, in_suffix, 
         out_prefix, out_reps, out_pairs, out_suffix, roi)
+
+    lib_qc_html = generate_lib_qc_report(
+        in_prefix, in_reps,
+        out_prefix, out_reps, out_short)
 
 
     # create html file path using short form info from meta dict
@@ -107,7 +145,7 @@ def generate_report(
 
         {read_qc_html}
 
-
+        {lib_qc_html}
 
         </body>
 

@@ -3,6 +3,7 @@ import pandas as pd
 import pybedtools
 import pysam
 import multiprocessing as mp
+from scipy.stats import pearsonr
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme(style="darkgrid")
@@ -228,4 +229,79 @@ def add_depth_fig(depth_fig):
 ######################
 # Library QC Metrics #
 ######################
+
+# within and between library correlation :: metrics 1,2,3
+
+def plot_library_correlation_helper(all_cov_beds, fig_out):
+
+    # get them as a dataframe
+    df = pd.concat(list(map(read_and_extract_coverage, all_cov_beds)), axis=1)
+    df.columns = [f"{line} Rep:{i}" for line in ["Input", "Output"] for i in range(1,len(all_cov_beds)//2+1)]
+
+    ## create the subplot figure
+    fig, axes = plt.subplots(
+        nrows=6, ncols=6, 
+        figsize=(12,8))
+
+    for i in range(len(all_cov_beds)):
+        for j in range(len(all_cov_beds)):
+            if i==j:
+                # diagonal
+                lib_name = df.iloc[:,i].name
+                axes[i][j].annotate(lib_name, xy=(0.5,0.5), xycoords='axes fraction', ha='center', fontsize=12, fontweight="bold")
+                axes[i][j].set_axis_off()
+            
+            if i>j:
+                # lower triangle
+                sns.scatterplot(x=df.iloc[:,j], y= df.iloc[:,i], ax=axes[i][j])
+                axes[i][j].set_ylabel(None)
+                axes[i][j].set_xlabel(None)
+
+                if j>0:
+                    axes[i][j].yaxis.set_ticklabels([])
+
+
+                if i<5:
+                    axes[i][j].xaxis.set_ticklabels([])
+
+            if i<j:
+                # upper triangle
+                r,p = pearsonr(df.iloc[:,i],df.iloc[:,j])
+                axes[i][j].annotate('\u03C1 = {:.2f}'.format(r), xy=(0.5,0.5), xycoords='axes fraction', ha='center')
+                axes[i][j].set_axis_off()
+
+
+    plt.tight_layout()
+    fig.savefig(fig_out)
+    return fig_out
+
+def get_corr_fig_path(out_pre, out_short):
+    out_dir = os.path.dirname(out_pre).replace(f"raw_data/{out_short}", "results/report/corr")
+    os.makedirs(out_dir, exist_ok=True)
+    out_fig = os.path.join(out_dir, f"{out_short}.png")
+    return out_fig
+
+def plot_library_correlation(
+    in_prefix, in_reps, 
+    out_prefix, out_reps, out_short):
+    # get input cov beds
+    # lib bam files
+    in_bam_reps, in_bam_merged = get_filtered_bams(in_prefix, in_reps)
+    # input coverage beds
+    in_rep_cov, in_merged_cov = get_coverage_files(in_bam_reps, in_bam_merged)
+    # get output cov beds
+    # lib bam files
+    out_bam_reps, out_bam_merged = get_filtered_bams(out_prefix, out_reps)
+    # input coverage beds
+    out_rep_cov, out_merged_cov = get_coverage_files(out_bam_reps, out_bam_merged)
+    all_rep_cov = in_rep_cov + out_rep_cov
+
+    # get corr fig
+    cfp = get_corr_fig_path(out_prefix, out_short)
+    cfp = plot_library_correlation_helper(all_rep_cov, cfp)
+    return cfp
+
+def add_correlation_fig(corr_fig):
+    corr_html = f"<img src={corr_fig} alt='cfg'>\n"
+    return corr_html
 
