@@ -240,7 +240,7 @@ def plot_library_correlation_helper(all_cov_beds, fig_out):
 
     ## create the subplot figure
     fig, axes = plt.subplots(
-        nrows=6, ncols=6, 
+        nrows=len(all_cov_beds), ncols=len(all_cov_beds), 
         figsize=(12,8))
 
     for i in range(len(all_cov_beds)):
