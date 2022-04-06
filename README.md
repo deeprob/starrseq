@@ -6,7 +6,7 @@ A set of tools to analyze data produced by STARRSeq libraries
 ### Base conda environment for data exploration and analysis
 
 ```bash
-foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard pandas openpyxl scikit-learn multiprocess bokeh requests pybedtools pysam
+foo@bar:~$ conda create -n starrseq -c conda-forge -c bioconda -c anaconda -c bjrn python=3.9 matplotlib jupyter ipykernel bwa samtools picard pandas openpyxl scikit-learn multiprocess bokeh requests pybedtools pysam bioinfokit matplotlib-venn adjusttext
 ```
 
 ### Conda environment for starrpeaker peak calling

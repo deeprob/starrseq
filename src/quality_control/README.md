@@ -19,8 +19,8 @@ This package generates a bunch of quality control metrics for STARRSeq input and
 1. Input-input replicate correlation
 2. Output-output replicate correlation
 3. Input-output replicate correlation
-4. Enhancer summit correlation between replicates
-5. Fold change correlation between replicates
+4. Fold change correlation between replicates
+5. Enhancer summit correlation between replicates
 6. Reproducible peaks between replicates
 
 ## Methods transparency

@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import pybedtools
 import pysam
@@ -305,3 +306,116 @@ def add_correlation_fig(corr_fig):
     corr_html = f"<img src={corr_fig} alt='cfg'>\n"
     return corr_html
 
+# fold change correlation between replicates :: metrics 4
+
+def get_repnum(in_beds, ko_beds):
+    assert len(in_beds) == len(ko_beds)
+    return len(in_beds)
+
+def read_coverage_convert_to_rpkm(cov_bed):
+    """
+    Reads the location and read depth of a region from a bed file
+    Normalizes the read depth to RPKM value
+    """
+    df = pd.read_csv(cov_bed, sep="\t", header=None, usecols=[0,1,2,3], names=["chrm", "start", "end", "reads"])
+    # assign pseudo count of 1 to 0 read regions
+    df.reads = df.reads.replace(0, 1)
+    # get the length of the regions to calculate rpkm values
+    df_gene_length = df.end - df.start
+    # calculate rpkm
+    df_norm_reads = (df.reads*10**6*10**3)/(df_gene_length*df.reads.sum())
+    df["rpkm"] = df_norm_reads
+    df = df.set_index(["chrm", "start", "end"])
+    return df.loc[:, ["rpkm"]]
+
+def convert_beds_to_rpkmdf(in_beds, out_beds):
+    rep_num = get_repnum(in_beds, out_beds)
+    df = pd.concat(list(map(read_coverage_convert_to_rpkm, in_beds+out_beds)), axis=1)
+    df.columns = [f"{line} Rep:{i}" for line in ["Input", "Output"] for i in range(1, rep_num + 1)]
+    return df
+
+def get_log2_rpkm_fc(df, in_col, out_col):
+    df_rep = df.iloc[:, [in_col, out_col]]
+    df_lfc = np.log2(df_rep.iloc[:,1]/df_rep.iloc[:,0])
+    return df_lfc
+
+def get_lfc_df(df):
+    rep_num = df.shape[1]//2
+    df_lfc = pd.concat(
+        [get_log2_rpkm_fc(df, i, i + rep_num) for i in range(rep_num)], 
+        axis=1
+        )
+    df_lfc.columns = [f"Rep {i}" for i in range(1, rep_num + 1)]
+    return df_lfc
+
+def get_fc_fig_path(out_pre, out_short):
+    out_dir = os.path.dirname(out_pre).replace(f"raw_data/{out_short}", "results/report/fc")
+    os.makedirs(out_dir, exist_ok=True)
+    out_fig = os.path.join(out_dir, f"{out_short}.png")
+    return out_fig
+
+def plot_fc_correlation_helper(in_beds, out_beds, fig_out):
+
+    # get them as a dataframe
+    df = convert_beds_to_rpkmdf(in_beds, out_beds)
+    lfc_df = get_lfc_df(df)
+
+    ## create the subplot figure
+    fig, axes = plt.subplots(
+        nrows=len(in_beds), ncols=len(in_beds), 
+        figsize=(8,6))
+
+    for i in range(len(in_beds)):
+        for j in range(len(in_beds)):
+            if i==j:
+                # diagonal
+                lib_name = lfc_df.iloc[:,i].name
+                axes[i][j].annotate(lib_name, xy=(0.5,0.5), xycoords='axes fraction', ha='center', fontsize=12, fontweight="bold")
+                axes[i][j].set_axis_off()
+            
+            if i>j:
+                # lower triangle
+                sns.scatterplot(x=lfc_df.iloc[:,j], y= lfc_df.iloc[:,i], ax=axes[i][j])
+                axes[i][j].set_ylabel(None)
+                axes[i][j].set_xlabel(None)
+
+                if j>0:
+                    axes[i][j].yaxis.set_ticklabels([])
+
+
+                if i<len(in_beds)-1:
+                    axes[i][j].xaxis.set_ticklabels([])
+
+            if i<j:
+                # upper triangle
+                r,p = pearsonr(lfc_df.iloc[:,i],lfc_df.iloc[:,j])
+                axes[i][j].annotate('\u03C1 = {:.2f}'.format(r), xy=(0.5,0.5), xycoords='axes fraction', ha='center')
+                axes[i][j].set_axis_off()
+
+
+    plt.tight_layout()
+    fig.savefig(fig_out)
+    return fig_out
+
+def plot_fc_correlation(
+    in_prefix, in_reps, 
+    out_prefix, out_reps, out_short):
+    # get input cov beds
+    # lib bam files
+    in_bam_reps, in_bam_merged = get_filtered_bams(in_prefix, in_reps)
+    # input coverage beds
+    in_rep_cov, in_merged_cov = get_coverage_files(in_bam_reps, in_bam_merged)
+    # get output cov beds
+    # lib bam files
+    out_bam_reps, out_bam_merged = get_filtered_bams(out_prefix, out_reps)
+    # input coverage beds
+    out_rep_cov, out_merged_cov = get_coverage_files(out_bam_reps, out_bam_merged)
+
+    # get corr fig
+    cfp = get_fc_fig_path(out_prefix, out_short)
+    cfp = plot_fc_correlation_helper(in_rep_cov, out_rep_cov, cfp)
+    return cfp
+
+def add_fc_fig(fc_fig):
+    fc_html = f"<img src={fc_fig} alt='cfg'>\n"
+    return fc_html

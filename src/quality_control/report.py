@@ -83,18 +83,19 @@ def generate_read_qc_report(
 
 
 def lib_qc_html(
-    corr_fig_path,
+    corr_fig_path, fc_fig_path, 
     ):
 
     corr_html = ut.add_correlation_fig(corr_fig_path)
+    fc_html = ut.add_fc_fig(fc_fig_path)
 
     html_out = f"""
         <h1>Library Quality Control</h1>
         <h2>Replicate Correlation Plots</h2>
         {corr_html}
-        <h2>Enhancer Summit Correlation</h2>
-
         <h2>Fold Change Correlation</h2>
+        {fc_html}
+        <h2>Enhancer Summit Correlation</h2>
 
         <h2>Reproducible Peaks Statistics</h2>   
         """
@@ -109,8 +110,11 @@ def generate_lib_qc_report(
         in_prefix, in_reps, 
         out_prefix, out_reps, out_short)
 
+    fc_fig_path = ut.plot_fc_correlation(
+        in_prefix, in_reps, 
+        out_prefix, out_reps, out_short)
 
-    lqc_html = lib_qc_html(corr_fig_path)
+    lqc_html = lib_qc_html(corr_fig_path, fc_fig_path)
 
 
     return lqc_html

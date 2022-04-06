@@ -19,8 +19,10 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--starrpeaker", action="store_false", help="Do not run the starrpeaker peak calling pipeline")
     parser.add_argument("-c", "--cradle", action="store_false", help="Do not run the cradle peak calling pipeline")
     parser.add_argument("-m", "--macs2", action="store_false", help="Do not run the macs2 peak calling pipeline")
+    parser.add_argument("-r", "--rep_peak", action="store_false", help="Do not call starrpeaker peaks for each library replicate")
     # calling q or qual argument will start the quality control process of the pipeline
     parser.add_argument("-q", "--qual", action="store_true", help="Generate a Quality control report on Input and Output libraries")
+
 
     cli_args = parser.parse_args()
 
@@ -30,7 +32,7 @@ if __name__ == "__main__":
         args = rpu.create_args(cli_args.meta_file, cli_args.ko, 
                     cli_args.input, cli_args.output, 
                     cli_args.dedup, cli_args.align, cli_args.filter, 
-                    cli_args.starrpeaker, cli_args.cradle, cli_args.macs2)
+                    cli_args.starrpeaker, cli_args.cradle, cli_args.macs2, cli_args.rep_peak)
 
         if cli_args.qual:
             # running the quality control pipeline with the qual flag specified
@@ -49,7 +51,7 @@ if __name__ == "__main__":
                 args.starrpeaker_data_dir, args.cradle_data_dir, 
                 args.input_flag, args.output_flag, 
                 args.dedup_flag, args.align_flag, args.filter_flag, 
-                args.starrpeaker_peak_flag, args.cradle_peak_flag, args.macs2_peak_flag)
+                args.starrpeaker_peak_flag, args.cradle_peak_flag, args.macs2_peak_flag, args.rep_peak_flag)
 
     else:
         # with no flag specified, create a meta file that fills a dictionary with path to starrseq libraries

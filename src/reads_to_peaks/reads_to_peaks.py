@@ -60,7 +60,7 @@ def call_peaks(input_library_filtered_prefix, output_library_filtered_prefix,
             reference_genome, reference_genome_twobit, roi_file,
             starrpeaker_data_dir, cradle_data_dir,
             input_flag, output_flag, 
-            starrpeaker_peak_flag, cradle_peak_flag, macs2_peak_flag):
+            starrpeaker_peak_flag, cradle_peak_flag, macs2_peak_flag, replicate_peak_flag):
 
     if starrpeaker_peak_flag:
         ut.call_starrpeaker_peaks(input_library_filtered_prefix, 
@@ -83,6 +83,14 @@ def call_peaks(input_library_filtered_prefix, output_library_filtered_prefix,
         ut.call_macs2_peaks(input_library_filtered_prefix, 
             output_library_filtered_prefix,
             output_flag=output_flag)
+    
+    #TODO: peak call per replicate for starrpeaker peak caller to compare peaks called between replicates
+    if replicate_peak_flag:
+        ut.call_starrpeaker_peaks_for_each_replicate(
+            input_library_aligned_prefix, input_library_replicates, 
+            output_library_aligned_prefix, output_library_replicates,
+            starrpeaker_data_dir,
+            output_flag=output_flag)        
 
     return 
 
@@ -92,7 +100,8 @@ def reads2peaks(input_library_prefix, input_library_replicates, input_library_re
                starrpeaker_data_dir, cradle_data_dir, 
                input_flag=True, output_flag=True, 
                dedup_flag=True, align_flag=True, filter_flag=True, 
-               starrpeaker_peak_flag=True, cradle_peak_flag=True, macs2_peak_flag=True):
+               starrpeaker_peak_flag=True, cradle_peak_flag=True, macs2_peak_flag=True,
+               rep_peak_flag=True):
     """
     Run everything from dedup to peak calling
     """
@@ -139,7 +148,7 @@ def reads2peaks(input_library_prefix, input_library_replicates, input_library_re
                 reference_genome, reference_genome_twobit, roi_file,
                 starrpeaker_data_dir, cradle_data_dir, 
                 input_flag, output_flag, 
-                starrpeaker_peak_flag, cradle_peak_flag, macs2_peak_flag)
+                starrpeaker_peak_flag, cradle_peak_flag, macs2_peak_flag, rep_peak_flag)
 
     return 
 

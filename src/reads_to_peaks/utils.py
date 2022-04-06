@@ -19,7 +19,7 @@ CURRENT_DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 def create_args(meta_file, ko_name,
     input_flag=True, output_flag=True, 
     dedup_flag=True, align_flag=True, filter_flag=True, 
-    starrpeaker_peak_flag=True, cradle_peak_flag=True, macs2_peak_flag=True):
+    starrpeaker_peak_flag=True, cradle_peak_flag=True, macs2_peak_flag=True, rep_peak_flag=True):
 
     with open(meta_file, "r") as f: 
         meta_dict = json.load(f)
@@ -54,6 +54,7 @@ def create_args(meta_file, ko_name,
         starrpeaker_peak_flag = starrpeaker_peak_flag,
         cradle_peak_flag = cradle_peak_flag,
         macs2_peak_flag = macs2_peak_flag,
+        rep_peak_flag = rep_peak_flag,
 
     )
     return args
@@ -155,6 +156,32 @@ def call_starrpeaker_peaks(input_library_filtered_prefix,
     if output_flag:
         output_peaks_prefix = os.path.join(output_peaks_prefix, "peaks")
         call_starrpeaker_peaks_helper(output_peaks_prefix, input_library_filtered_bam, output_library_filtered_bam, starrpeaker_data_dir)
+
+    return
+
+def call_starrpeaker_peaks_for_each_replicate(
+    input_library_aligned_prefix, input_library_replicates, 
+    output_library_aligned_prefix, output_library_replicates,
+    starrpeaker_data_dir, 
+    output_flag=False):
+
+    """Call peaks for each output library replicates using starrpeaker"""
+
+    ireps = input_library_replicates.split()
+    oreps = output_library_replicates.split()
+    
+    for irep,orep in zip(ireps,oreps):
+        # create the output peaks path where it will be stored
+        output_peaks_prefix = os.path.join(os.path.dirname(output_library_aligned_prefix.replace("aligned_reads", "results/peaks")), f"{orep}", "starrpeaker")
+        # create the output peaks path where it will be stored
+        os.makedirs(output_peaks_prefix, exist_ok=True)
+        # prepare the input files per replicate for starrpeaker
+        input_library_filtered_bam =  "_".join([input_library_aligned_prefix, irep, "filtered.bam"])
+        output_library_filtered_bam =  "_".join([output_library_aligned_prefix, orep, "filtered.bam"])
+
+        if output_flag:
+            output_peaks_prefix = os.path.join(output_peaks_prefix, "peaks")
+            call_starrpeaker_peaks_helper(output_peaks_prefix, input_library_filtered_bam, output_library_filtered_bam, starrpeaker_data_dir)
 
     return
 
